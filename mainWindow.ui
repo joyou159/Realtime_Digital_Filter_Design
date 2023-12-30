@@ -248,7 +248,7 @@
          </widget>
         </item>
         <item>
-         <widget class="PlotWidget" name="paddingArea" native="true">
+         <widget class="QWidget" name="paddingArea" native="true">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);
 </string>
