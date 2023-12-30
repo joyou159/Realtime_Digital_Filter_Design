@@ -58,7 +58,7 @@
          </widget>
         </item>
         <item>
-         <widget class="PlotWidget" name="z_plane" native="true">
+         <widget class="PlotWidget" name="allPassPhase" native="true">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);
 </string>
@@ -200,7 +200,7 @@
          </widget>
         </item>
         <item>
-         <widget class="PlotWidget" name="z_plane_2" native="true">
+         <widget class="PlotWidget" name="original_phase" native="true">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);
 </string>

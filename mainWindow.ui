@@ -113,7 +113,7 @@
          </widget>
         </item>
         <item>
-         <widget class="PlotWidget" name="z_plane" native="true">
+         <widget class="PlotWidget" name="zPlane" native="true">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);
 </string>
@@ -184,7 +184,7 @@
          </widget>
         </item>
         <item>
-         <widget class="PlotWidget" name="magPlot_2" native="true">
+         <widget class="PlotWidget" name="magPlot" native="true">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);</string>
           </property>
