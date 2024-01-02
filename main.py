@@ -1,16 +1,18 @@
 from PyQt6 import QtWidgets, uic, QtGui
+from PyQt6.QtCore import QTimer
 import numpy as np
 import pyqtgraph as pg
 import qdarkstyle
 import sys
+from UnitCircle import UnitCircle
 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.init_ui()
-        self.init_complex_plane()
-        self.calculate_and_plot_magnitude()
+        # self.init_complex_plane()
+        # self.calculate_and_plot_magnitude()
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
@@ -18,6 +20,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.correctPhase.clicked.connect(self.open_phase_correction_window)
         self.zPlane = self.ui.zPlane
         self.magPlot = self.ui.magPlot
+
+        self.circle_object = UnitCircle(self.ui)
 
     def init_complex_plane(self):
         # Create a PyQtGraph window for the complex plane
