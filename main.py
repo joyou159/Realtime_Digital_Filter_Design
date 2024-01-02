@@ -3,6 +3,7 @@ import numpy as np
 import pyqtgraph as pg
 import qdarkstyle
 import sys
+from scipy.signal import freqz, zpk2tf, dlti, TransferFunction
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -10,7 +11,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.init_ui()
         self.init_complex_plane()
-        self.calculate_and_plot_magnitude()
+        self.plot_magnitude_and_phase()
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
@@ -18,6 +19,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.correctPhase.clicked.connect(self.open_phase_correction_window)
         self.zPlane = self.ui.zPlane
         self.magPlot = self.ui.magPlot
+        self.customSignal.clicked.connect(self.on_customSignal_cliked)
+        self.importSignal.clicked.connect(self.on_importSignal_cliked)
+        self.zerosButton.clicked.connect(self.on_zeros_cliked)
+        self.polesButton.clicked.connect(self.on_poles_cliked)
+
+    def on_customSignal_cliked(self):
+        self.customSignal.setStyleSheet("background-color: red;")
+        self.importSignal.setStyleSheet("")
+
+    def on_importSignal_cliked(self):
+        self.customSignal.setStyleSheet("")
+        self.importSignal.setStyleSheet("background-color: red;")
+
+    def on_zeros_cliked(self):
+        self.zerosButton.setStyleSheet("background-color: red;")
+        self.polesButton.setStyleSheet("")
+
+    def on_poles_cliked(self):
+        self.zerosButton.setStyleSheet("")
+        self.polesButton.setStyleSheet("background-color: red;")
 
     def init_complex_plane(self):
         # Create a PyQtGraph window for the complex plane
@@ -26,8 +47,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zPlane.plotItem.showGrid(True, True)
         self.plot_unit_circle()
 
-        self.zeros = np.array([0 + 1j], dtype=complex)
-        self.poles = np.array([], dtype=complex)
+        self.zeros = np.array([], dtype=complex)
+        self.poles = np.array([0+0.90j], dtype=complex)
 
         if self.zeros.size > 0:
             self.plot_complex_points(
@@ -49,13 +70,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zPlane.scatterPlot([points.real], [points.imag], pen=color,
                                 symbol=symbol, symbolPen=color, symbolSize=size, symbolBrush=color)
 
-    def calculate_and_plot_magnitude(self):
+    def plot_magnitude_and_phase(self):
         self.points_on_the_circle = self.calculate_points_on_circle()
-        mag = 20 * np.log10(self.get_the_mag().flatten())
+        w, mag, phase = self.get_the_mag_and_phase()
 
+        # Plot the magnitude response
         self.magPlot.plotItem.showGrid(True, True)
         self.magPlot.clear()
-        self.magPlot.plot(mag)
+        self.magPlot.plot(w, mag)
+        self.magPlot.setLabel('left', 'Magnitude (dB)')
+        self.magPlot.setLabel('bottom', 'Frequency (Hz)')
+
+        # Plot the phase response
+        self.phasePlot.plotItem.showGrid(True, True)
+        self.phasePlot.clear()
+        self.phasePlot.plot(w, phase)
+        self.phasePlot.setLabel('left', 'Phase (radians)')
+        self.phasePlot.setLabel('bottom', 'Frequency (Hz)')
 
     def calculate_points_on_circle(self):
         theta_for_half_circle = np.linspace(0, np.pi, 100)
@@ -81,14 +112,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setEnabled(True)
         super(MainWindow, self).closeEvent(event)
 
-    def get_the_mag(self):
-        distance_of_zeros, distance_of_poles = 1, 1
-        if self.zeros.size > 0:
-            distance_of_zeros = np.abs(self.zeros - self.points_on_the_circle)
-        if self.poles.size > 0:
-            distance_of_poles = np.abs(self.poles - self.points_on_the_circle)
+    def get_the_mag_and_phase(self):
+        # Calculate frequency response
+        w, h = freqz(np.poly(self.zeros), np.poly(self.poles))
 
-        return (distance_of_zeros / distance_of_poles)
+        frequencies = w
+        mag_response = np.abs(h)
+        phase_response = np.angle(h)
+
+        return frequencies, mag_response, phase_response
 
 
 class PhaseCorrectionWindow(QtWidgets.QMainWindow):

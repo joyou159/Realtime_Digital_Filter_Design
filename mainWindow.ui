@@ -53,14 +53,14 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="zeros">
+           <widget class="QPushButton" name="zerosButton">
             <property name="text">
              <string>Zeros</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="poles">
+           <widget class="QPushButton" name="polesButton">
             <property name="text">
              <string>Poles</string>
             </property>
@@ -226,6 +226,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <widget class="QPushButton" name="customSignal">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
              <string>Custom Signal</string>
             </property>
@@ -233,6 +236,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="importSignal">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
              <string>Import Signal</string>
             </property>
