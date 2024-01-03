@@ -84,7 +84,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="Conj_pair">
             <property name="text">
              <string>conjugates</string>
             </property>
@@ -123,26 +123,26 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="Clear_selection">
             <item>
              <property name="text">
-              <string>zeros</string>
+              <string>Zeros</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>poles</string>
+              <string>Poles</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>both</string>
+              <string>Both</string>
              </property>
             </item>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clear">
+           <widget class="QPushButton" name="clear_button">
             <property name="text">
              <string>Clear</string>
             </property>
