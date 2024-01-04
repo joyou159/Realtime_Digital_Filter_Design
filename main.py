@@ -11,8 +11,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.init_ui()
-        # self.init_complex_plane()
-        # self.calculate_and_plot_magnitude()
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
