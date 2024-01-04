@@ -7,28 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>604</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>20</number>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
     <property name="topMargin">
-     <number>40</number>
-    </property>
-    <property name="rightMargin">
-     <number>40</number>
+     <number>9</number>
     </property>
     <property name="bottomMargin">
-     <number>20</number>
+     <number>0</number>
     </property>
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,1">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,2,2">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,1,0,0">
         <property name="leftMargin">
@@ -215,25 +212,9 @@
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0,4,0,4,0,4">
-        <property name="leftMargin">
-         <number>20</number>
-        </property>
-        <property name="rightMargin">
-         <number>20</number>
-        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0,4,0,4,0,4,0,0">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QPushButton" name="customSignal">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>Custom Signal</string>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QPushButton" name="importSignal">
             <property name="styleSheet">
@@ -241,6 +222,13 @@
             </property>
             <property name="text">
              <string>Import Signal</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="customSignal">
+            <property name="text">
+             <string>Custom Signal</string>
             </property>
            </widget>
           </item>
@@ -254,11 +242,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="paddingArea" native="true">
+         <widget class="QWidget" name="area" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">background-color: rgb(0, 0, 0);</string>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3"/>
          </widget>
         </item>
         <item>
@@ -288,6 +276,23 @@
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 0, 0);
 </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="Speed">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="numOfPoints">
+          <property name="text">
+           <string>1 points/sec</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
