@@ -37,9 +37,9 @@ class UnitCircle:
         self.update_plot(self.x, self.y)
 
         self.pole_symbol = pg.ScatterPlotItem(
-            size=10, pen=pg.mkPen(None), brush=pg.mkBrush(255, 255, 255), symbol="x")
+            size=10, pen=pg.mkPen(None), brush=pg.mkBrush(255, 0, 0), symbol="x")
         self.zero_symbol = pg.ScatterPlotItem(
-            size=10, pen=pg.mkPen(None), brush=pg.mkBrush(255, 255, 255), symbol="o")
+            size=10, pen=pg.mkPen(None), brush=pg.mkBrush(0, 0, 255), symbol="o")
         self.zPlane.addItem(self.pole_symbol)
         self.zPlane.addItem(self.zero_symbol)
 
@@ -60,6 +60,8 @@ class UnitCircle:
             self.Zeros = list()
         self.zero_symbol.setData(pos=self.Zeros)
         self.pole_symbol.setData(pos=self.Poles)
+        self.main_window.update_zeros_poles()
+        self.main_window.plot_magnitude_and_phase()
 
     def handle_clearing_mode(self):
         self.clear_mode = self.main_window.ui.sender().currentText()
@@ -157,6 +159,7 @@ class UnitCircle:
             elif event.button() == QtCore.Qt.MouseButton.RightButton:
                 self.clicked_point = pos
         self.main_window.update_zeros_poles()
+        self.main_window.plot_magnitude_and_phase()
 
     def check_for_dragging(self, pos):
         if self.dragging_flag == False:
@@ -195,6 +198,7 @@ class UnitCircle:
                         self.zero_symbol.setData(pos=self.Zeros)
                         break
         self.main_window.update_zeros_poles()
+        self.main_window.plot_magnitude_and_phase()
 
     def contextMenuEvent(self, event):
         if self.clicked_point is not None:
@@ -225,3 +229,4 @@ class UnitCircle:
                 self.clicked_point = None
                 self.zPlane.setMenuEnabled(True)
                 self.main_window.update_zeros_poles()
+                self.main_window.plot_magnitude_and_phase()

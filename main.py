@@ -4,8 +4,6 @@ import numpy as np
 import pyqtgraph as pg
 import qdarkstyle
 import sys
-
-
 from scipy.signal import freqz, zpk2tf, lfilter
 import os
 from scipy.io import wavfile
@@ -33,6 +31,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.signal = Signal()
         self.phase_correction_filters = []
         self.update_zeros_poles()
+        self.zeros_all_pass = np.array([], dtype=complex)
+        self.poles_all_pass = np.array([], dtype=complex)
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
@@ -71,11 +71,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.circle_object = UnitCircle(self)
         self.area.layout().addWidget(self.padding_area)
 
+    def compose_complex(self, list_of_points):
+        complex_points = list()
+        for point in list_of_points:
+            real_part = round(point.x(), 3)
+            imaginary_part = round(point.y(), 3)
+            new_complex_number = complex(real_part, imaginary_part)
+            complex_points.append(new_complex_number)
+        return np.array(complex_points, dtype=complex)
+
     def update_zeros_poles(self):
-        self.all_zeros = np.array(self.circle_object.Zeros)
-        self.all_poles = np.array(self.circle_object.Poles)
-        print(f"Current zeros values :{self.all_zeros}")
-        print(f"Current Poles values :{self.all_poles}")
+        self.zeros = self.compose_complex(self.circle_object.Zeros)
+        self.poles = self.compose_complex(self.circle_object.Poles)
+        print(f"Current zeros values :{self.zeros}")
+        print(f"Current Poles values :{self.poles}")
 
     def update_filter_speed(self, value):
         self.point_per_second = value
