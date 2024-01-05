@@ -179,6 +179,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.phasePlot.plot(w, phase)
 
     def plot_input_and_output_signal(self):
+        self.outputSignal.clear()
+
+        self.inputSignal.clear()
         numerator, denominator = zpk2tf(self.zeros, self.poles, 1)
         self.signal.output_signal_after_filter = np.real(
             lfilter(numerator, denominator, self.signal.data))

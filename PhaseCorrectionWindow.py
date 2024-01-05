@@ -23,6 +23,24 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.originalPhase.setLabel('left', 'Phase (radians)')
         self.originalPhase.setLabel('bottom', 'Frequency (Hz)')
 
+        self.fill_filters_list()
+
+        if self.mainWindow.poles_all_pass.size:
+            self.plot_graphs()
+
+        print("Poles All Pass:")
+
+        for pole in self.mainWindow.poles_all_pass:
+            print(pole)
+
+        print("Zeros All Pass:")
+        for zero in self.mainWindow.zeros_all_pass:
+            print(zero)
+
+        print("Phase Correction Filters:")
+        for phase_filter in self.mainWindow.phase_correction_filters:
+            print(phase_filter)
+
     def on_window_closed(self):
         self.close()
 
@@ -55,10 +73,19 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         new_filter = complex(text)
         self.mainWindow.phase_correction_filters.append(new_filter)
 
-        self.mainWindow.zeros_all_pass = np.append(
-            self.mainWindow.zeros, 1 / new_filter.conjugate())
-        self.mainWindow.poles_all_pass = np.append(
-            self.mainWindow.poles, new_filter)
+        # Assuming self.mainWindow.zeros_all_pass and self.mainWindow.poles_all_pass are initially 1-dimensional arrays or empty
+        if not self.mainWindow.zeros_all_pass.size:
+            self.mainWindow.zeros_all_pass = np.array(
+                [1 / new_filter.conjugate()])
+        else:
+            self.mainWindow.zeros_all_pass = np.concatenate(
+                (self.mainWindow.zeros_all_pass, np.array([1 / new_filter.conjugate()])))
+
+        if not self.mainWindow.poles_all_pass.size:
+            self.mainWindow.poles_all_pass = np.array([new_filter])
+        else:
+            self.mainWindow.poles_all_pass = np.concatenate(
+                (self.mainWindow.poles_all_pass, np.array([new_filter])))
 
         self.lineEdit.clear()
         self.plot_graphs()
@@ -92,3 +119,36 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
 
         self.originalPhase.clear()
         self.originalPhase.plot(w1, phase_all_pass)
+
+    def fill_filters_list(self):
+        # Clear the existing items in the filtersList
+        self.filtersList.clear()
+
+        # Iterate over the poles and add items to the filtersList
+        for phase_correction_filter in self.mainWindow.phase_correction_filters:
+            self.add_filter_from_pole(phase_correction_filter)
+
+    def add_filter_from_pole(self, pole):
+        custom_widget = QWidget()
+        layout = QHBoxLayout()
+
+        # Create a QLabel to display the pole coefficient
+        label = QLabel(str(pole))
+        label.setStyleSheet("color:white")
+
+        # Create a QPushButton for deletion
+        icon_button = QPushButton()
+        icon_button.setIcon(QIcon("Icons/delete-svgrepo-com.svg"))
+        icon_button.setStyleSheet("background-color:transparent")
+        icon_button.clicked.connect(
+            lambda: self.delete_from_filters(custom_widget))
+
+        layout.addWidget(icon_button)
+        layout.addWidget(label)
+        custom_widget.setLayout(layout)
+
+        # Create a QListWidgetItem and set the custom widget as the display widget
+        item = QListWidgetItem()
+        item.setSizeHint(custom_widget.sizeHint())
+        self.filtersList.addItem(item)
+        self.filtersList.setItemWidget(item, custom_widget)
