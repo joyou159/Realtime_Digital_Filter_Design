@@ -61,7 +61,7 @@ class UnitCircle:
         self.zero_symbol.setData(pos=self.Zeros)
         self.pole_symbol.setData(pos=self.Poles)
         self.main_window.update_zeros_poles()
-        self.main_window.plot_magnitude_and_phase()
+        self.plotting()
 
     def handle_clearing_mode(self):
         self.clear_mode = self.main_window.ui.sender().currentText()
@@ -159,7 +159,7 @@ class UnitCircle:
             elif event.button() == QtCore.Qt.MouseButton.RightButton:
                 self.clicked_point = pos
         self.main_window.update_zeros_poles()
-        self.main_window.plot_magnitude_and_phase()
+        self.plotting()
 
     def check_for_dragging(self, pos):
         if self.dragging_flag == False:
@@ -198,7 +198,7 @@ class UnitCircle:
                         self.zero_symbol.setData(pos=self.Zeros)
                         break
         self.main_window.update_zeros_poles()
-        self.main_window.plot_magnitude_and_phase()
+        self.plotting()
 
     def contextMenuEvent(self, event):
         if self.clicked_point is not None:
@@ -229,4 +229,11 @@ class UnitCircle:
                 self.clicked_point = None
                 self.zPlane.setMenuEnabled(True)
                 self.main_window.update_zeros_poles()
-                self.main_window.plot_magnitude_and_phase()
+                self.plotting()
+
+    def plotting(self):
+        self.main_window.plot_magnitude_and_phase()
+        self.main_window.outputSignal.clear()
+        self.main_window.inputSignal.clear()
+        if len(self.main_window.signal.data):
+            self.main_window.plot_input_and_output_signal()

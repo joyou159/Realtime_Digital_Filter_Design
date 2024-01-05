@@ -29,7 +29,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.point_per_second = 1  # Initial filter speed
         self.idx = 0
         self.signal = Signal()
-        self.phase_correction_filters = []
+        self.all_phase_correction_filters = [
+            0.99, 0.345, 0.732, 0.456]
+        self.checked_phase_correction_filters = []
         self.update_zeros_poles()
         self.zeros_all_pass = np.array([], dtype=complex)
         self.poles_all_pass = np.array([], dtype=complex)
@@ -52,13 +54,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.magPlot.plotItem.showGrid(True, True)
 
         self.magPlot.setLabel('left', 'Magnitude (dB)')
-        self.magPlot.setLabel('bottom', 'Frequency (Hz)')
+        self.magPlot.setLabel('bottom', 'W (radian/sample)')
 
         # Plot the phase response
         self.phasePlot.plotItem.showGrid(True, True)
 
-        self.phasePlot.setLabel('left', 'Phase (radians)')
-        self.phasePlot.setLabel('bottom', 'Frequency (Hz)')
+        self.phasePlot.setLabel('left', 'Phase (radian)')
+        self.phasePlot.setLabel('bottom', 'W (radian/sample)')
 
         self.ui.correctPhase.clicked.connect(self.open_phase_correction_window)
         self.importSignal.clicked.connect(self.on_importSignal_cliked)
@@ -95,21 +97,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.idx += self.point_per_second
 
         # Plot updated output signal
-        self.outputSignal.plot(
-            self.signal.time[:self.idx], self.signal.output_signal_after_filter[:self.idx], pen='r')
+        self.outputSignal.plot(self.signal.time[:self.idx],
+                               self.signal.output_signal_after_filter[:self.idx], pen='r')
 
         self.inputSignal.plot(
             self.signal.time[:self.idx], self.signal.data[:self.idx], pen='b')
 
     def on_importSignal_cliked(self):
         self.input_mode = "import"
+        self.customSignal.setStyleSheet("")
         self.browse()
 
     def on_customSignal_cliked(self):
         if self.input_mode == "custom":
             self.input_mode = None
-            self.padding_area.elapsed_timer = QElapsedTimer()
-            self.padding_area.first_time = True
+            # self.padding_area.timer = QTimer(self)
+            self.padding_area.first_time_enter = True
         else:
             self.input_mode = "custom"
         # Toggle button color between red and white
@@ -168,6 +171,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.signal.data = data
         self.signal.time = time
 
+        self.outputSignal.clear()
+        self.inputSignal.clear()
         self.plot_input_and_output_signal()
 
     def plot_magnitude_and_phase(self):  # need to be modified
@@ -179,9 +184,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.phasePlot.plot(w, phase)
 
     def plot_input_and_output_signal(self):
-        self.outputSignal.clear()
 
-        self.inputSignal.clear()
         numerator, denominator = zpk2tf(self.zeros, self.poles, 1)
         self.signal.output_signal_after_filter = np.real(
             lfilter(numerator, denominator, self.signal.data))
@@ -218,7 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
         w, h = freqz(np.poly(zeros), np.poly(poles))
 
         frequencies = w
-        mag_response = np.abs(h)
+        mag_response = 20 * np.log10(abs(h))
         phase_response = np.angle(h)
 
         return frequencies, mag_response, phase_response

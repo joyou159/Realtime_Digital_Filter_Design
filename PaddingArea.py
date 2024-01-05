@@ -1,7 +1,8 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QApplication
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QCursor
+from PyQt6.QtWidgets import QWidget
+import numpy as np
+import sys
+from scipy.signal import freqz, zpk2tf, lfilter
 
 
 class PaddingArea(QWidget):
@@ -9,9 +10,7 @@ class PaddingArea(QWidget):
         super().__init__()
 
         self.mainWindow = mainWindow
-        self.timer = QTimer(self)
         self.first_time_enter = True
-        self.elapsed_time = 0
         self.pause_time = 0
         self.initUI()
 
@@ -19,29 +18,29 @@ class PaddingArea(QWidget):
         # Start capturing mouse movement
         self.setMouseTracking(True)
 
-        # Connect the timeout signal of the QTimer to the update_data function
-        self.timer.timeout.connect(self.update_data)
-        self.timer.start(10)  # Set the timeout interval in milliseconds
-
     def enterEvent(self, event):
         if self.first_time_enter and self.mainWindow.input_mode == "custom":
+            self.mainWindow.idx = 0
+            self.mainWindow.outputSignal.clear()
+            self.mainWindow.inputSignal.clear()
+            self.mainWindow.signal.data = []
+            self.mainWindow.signal.output_signal_after_filter = []
             self.first_time_enter = False
-            self.elapsed_time = 0  # Reset elapsed time
-            self.timer.start()
 
-    def leaveEvent(self, event):
-        # Stop collecting data when leaving the widget
+    def mouseMoveEvent(self, event):
         if not self.first_time_enter and self.mainWindow.input_mode == "custom":
-            self.timer.stop()
-            self.pause_time = self.elapsed_time
-
-    def update_data(self):
-        # Capture mouse movement and update data periodically
-        if not self.first_time_enter and self.mainWindow.input_mode == "custom":
-            y = self.mapFromGlobal(QCursor.pos()).y()
-            # Increment elapsed time with the timer interval
-            self.elapsed_time += self.timer.interval()
-            # Append the elapsed time in milliseconds to the time list
-            self.mainWindow.signal.time.append(self.elapsed_time)
+            y = event.y()
             self.mainWindow.signal.data.append(y)
-            self.mainWindow.plot_input_and_output_signal()
+            self.plot()
+
+    def plot(self):
+        numerator, denominator = zpk2tf(
+            self.mainWindow.zeros, self.mainWindow.poles, 1)
+        self.mainWindow.signal.output_signal_after_filter = np.real(
+            lfilter(numerator, denominator, self.mainWindow.signal.data))
+        # Plot updated output signal
+        self.mainWindow.outputSignal.plot(
+            self.mainWindow.signal.output_signal_after_filter, pen='r')
+
+        self.mainWindow.inputSignal.plot(
+            self.mainWindow.signal.data, pen='b')
