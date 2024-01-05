@@ -13,17 +13,17 @@ class UnitCircle:
         self.main_window = main_window
         self.Poles = []
         self.Zeros = []
-        self.zPlane = self.main_window.zPlane
+        self.zPlane = self.main_window.ui.zPlane
         self.zPlane.hideAxis('bottom')
         self.zPlane.hideAxis('left')
         self.zPlane.setLimits(xMin=-1.1, xMax=1.1, yMin=-1.1, yMax=1.1)
-        self.zeros_button = self.main_window.zeros
-        self.poles_button = self.main_window.poles
+        self.zeros_button = self.main_window.ui.zerosButton
+        self.poles_button = self.main_window.ui.polesButton
         self.zeros_button_pressed = True
         self.poles_button_pressed = False
         self.clicked_point = None  # for removing
         self.dragging_flag = False
-        self.clear_mode = self.main_window.Clear_selection.currentText()
+        self.clear_mode = self.main_window.ui.Clear_selection.currentText()
         self.change_color()
 
         self.zeros_button.clicked.connect(self.handle_mode_of_insertion)
@@ -62,7 +62,7 @@ class UnitCircle:
         self.pole_symbol.setData(pos=self.Poles)
 
     def handle_clearing_mode(self):
-        self.clear_mode = self.main_window.sender().currentText()
+        self.clear_mode = self.main_window.ui.sender().currentText()
 
     def calculate_circle_points(self, num_points=100):
         theta = 2 * np.pi * np.linspace(0, 1, num_points)
@@ -71,23 +71,30 @@ class UnitCircle:
         return x, y
 
     def handle_mode_of_insertion(self):
-        source = self.main_window.sender()
-        if source is self.zeros_button and not self.zeros_button_pressed:
+        source = self.main_window.ui.sender()
+        if source is self.zeros_button:
             self.zeros_button_pressed = True
             self.poles_button_pressed = False
             self.change_color()
-        elif source is self.poles_button and not self.poles_button_pressed:
+        elif source is self.poles_button:
             self.poles_button_pressed = True
             self.zeros_button_pressed = False
             self.change_color()
 
     def change_color(self):
-        zeros_color = QColor(
-            0, 0, 255) if self.zeros_button_pressed else QColor(255, 0, 0)
+        if self.zeros_button_pressed:
+            zeros_color = QColor(
+                255, 0, 0)
+        else:
+            zeros_color = QColor()
         self.zeros_button.setStyleSheet(
             f'background-color: {zeros_color.name()};')
-        poles_color = QColor(
-            0, 0, 255) if self.poles_button_pressed else QColor(255, 0, 0)
+
+        if self.poles_button_pressed:
+            poles_color = QColor(
+                255, 0, 0)
+        else:
+            poles_color = QColor()
         self.poles_button.setStyleSheet(
             f'background-color: {poles_color.name()};')
 
@@ -122,7 +129,6 @@ class UnitCircle:
         if self.poles_button_pressed or self.zeros_button_pressed:
             pos = self.zPlane.plotItem.vb.mapSceneToView(event.scenePos())
             if event.button() == QtCore.Qt.MouseButton.LeftButton:
-                # Check if the clicked point is close to any poles or zeros
                 if self.check_for_dragging(pos):
                     print("activate dragging")
                     return
@@ -149,12 +155,12 @@ class UnitCircle:
                     self.dragging_flag = False
 
             elif event.button() == QtCore.Qt.MouseButton.RightButton:
-                # Store the clicked point for the context menu
                 self.clicked_point = pos
+        self.main_window.update_zeros_poles()
 
     def check_for_dragging(self, pos):
         if self.dragging_flag == False:
-            threshold = 0.1  # Adjust the distance threshold if needed
+            threshold = 0.1  # adjustable
             for pole_pos in self.Poles:
                 if (pole_pos - pos).manhattanLength() < threshold:
                     self.start_dragging(pos, 'pole', pole_pos)
@@ -166,18 +172,16 @@ class UnitCircle:
         return False
 
     def start_dragging(self, start_pos, item, original_pos):
-        # Start dragging an existing pole or zero
         self.dragging_flag = True
         self.dragging_item = item
 
     def handleMouseMove(self, event):
         if self.dragging_flag == False:
             return
-        # Update the position of the dragged pole or zero during mouse movement
         if self.dragging_flag:
             new_pos = self.zPlane.plotItem.vb.mapSceneToView(
                 event)
-            threshold = 0.15  # Adjust the threshold based on your needs
+            threshold = 0.15  # Adjustable
             if self.dragging_item == 'pole':
                 for i, pole_pos in enumerate(self.Poles):
                     if (pole_pos - new_pos).manhattanLength() < threshold:
@@ -190,15 +194,14 @@ class UnitCircle:
                         self.Zeros[i] = QPointF(new_pos)
                         self.zero_symbol.setData(pos=self.Zeros)
                         break
+        self.main_window.update_zeros_poles()
 
     def contextMenuEvent(self, event):
-        # Handle right-click context menu to remove poles/zeros
         if self.clicked_point is not None:
             menu = QtWidgets.QMenu()
-            threshold = 0.1  # Increase the distance threshold if needed
-            clicked_point = self.clicked_point  # Store the clicked point
+            threshold = 0.1
+            clicked_point = self.clicked_point
 
-            # Check if the clicked point is close to any poles
             for pole_pos in self.Poles:
                 if (pole_pos - clicked_point).manhattanLength() < threshold:
                     action = menu.addAction('Remove Pole')
@@ -206,7 +209,6 @@ class UnitCircle:
                         partial(self.remove_point, 'pole', pole_pos))
                     self.zPlane.setMenuEnabled(False)
 
-            # Check if the clicked point is close to any zeros
             for zero_pos in self.Zeros:
                 if (zero_pos - clicked_point).manhattanLength() < threshold:
                     action = menu.addAction('Remove Zero')
@@ -222,3 +224,4 @@ class UnitCircle:
                 # If an action was triggered, reset clicked point
                 self.clicked_point = None
                 self.zPlane.setMenuEnabled(True)
+                self.main_window.update_zeros_poles()
