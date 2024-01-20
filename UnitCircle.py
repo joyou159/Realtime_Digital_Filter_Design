@@ -109,6 +109,7 @@ class UnitCircle:
             pos=0, angle=0, movable=False, pen=(255, 255, 255))
         self.zPlane.addItem(vLine)
         self.zPlane.addItem(hLine)
+    
 
     def add_pole(self, pos):
         self.Poles.append(pos)

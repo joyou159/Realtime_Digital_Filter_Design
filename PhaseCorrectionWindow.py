@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QFileDialog, QMessageB
 from PyQt6.QtGui import QIcon
 import numpy as np
 from PyQt6.QtCore import Qt, QElapsedTimer
+from pyqtgraph import Point
 
 
 class PhaseCorrectionWindow(QtWidgets.QMainWindow):
@@ -19,10 +20,10 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.allPassPhase.setLabel('left', 'Phase (radian)')
         self.allPassPhase.setLabel('bottom', 'W (radian/sample)')
         # Plot the phase response
-        self.originalPhase.plotItem.showGrid(True, True)
+        self.selectedFilterPhase.plotItem.showGrid(True, True)
 
-        self.originalPhase.setLabel('left', 'Phase (radian)')
-        self.originalPhase.setLabel('bottom', 'W (radian/sample)')
+        self.selectedFilterPhase.setLabel('left', 'Phase (radian)')
+        self.selectedFilterPhase.setLabel('bottom', 'W (radian/sample)')
 
         self.fill_filters_list()
 
@@ -46,7 +47,36 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         for phase_filter in self.mainWindow.checked_phase_correction_filters:
             print(phase_filter)
 
+    def closeEvent(self, event):
+        self.on_window_closed()
+        event.accept()
+
     def on_window_closed(self):
+        # Concatenate zeros only if they are not already in the list
+        for zero in self.mainWindow.zeros_all_pass:
+            if zero not in self.mainWindow.zeros:
+                self.mainWindow.zeros = np.concatenate(
+                    (self.mainWindow.zeros, [zero]), axis=0)
+
+                # Assuming self.mainWindow.zeros is a list of complex numbers
+                self.mainWindow.circle_object.add_zero(
+                    Point(zero.real, zero.imag))
+
+        # Concatenate poles only if they are not already in the list
+        for pole in self.mainWindow.poles_all_pass:
+            if pole not in self.mainWindow.poles:
+                self.mainWindow.poles = np.concatenate(
+                    (self.mainWindow.poles, [pole]), axis=0)
+
+                self.mainWindow.circle_object.add_pole(
+                    Point(pole.real, pole.imag))
+
+        w1, _, phase_all_pass = self.mainWindow.get_the_mag_and_phase(
+            np.concatenate((self.mainWindow.zeros, self.mainWindow.zeros_all_pass),
+                           axis=0), np.concatenate((self.mainWindow.poles, self.mainWindow.poles_all_pass), axis=0))
+
+        self.mainWindow.phasePlot.clear()
+        self.mainWindow.phasePlot.plot(w1, phase_all_pass)
         self.close()
 
     def add_filter(self):
@@ -85,35 +115,35 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.lineEdit.clear()
 
     def handle_checkbox_change(self, value, custom_widget):
+        item = None
         if self.sender().isChecked():
-            new_filter = complex(value)
-            self.mainWindow.checked_phase_correction_filters.append(new_filter)
+            item = complex(value)
+            self.mainWindow.checked_phase_correction_filters.append(item)
             # Assuming self.mainWindow.zeros_all_pass and self.mainWindow.poles_all_pass are initially 1-dimensional arrays or empty
             if not self.mainWindow.zeros_all_pass.size:
                 self.mainWindow.zeros_all_pass = np.array(
-                    [1 / new_filter.conjugate()])
+                    [1 / item.conjugate()])
             else:
                 self.mainWindow.zeros_all_pass = np.concatenate(
-                    (self.mainWindow.zeros_all_pass, np.array([1 / new_filter.conjugate()])))
+                    (self.mainWindow.zeros_all_pass, np.array([1 / item.conjugate()])))
 
             if not self.mainWindow.poles_all_pass.size:
-                self.mainWindow.poles_all_pass = np.array([new_filter])
+                self.mainWindow.poles_all_pass = np.array([item])
             else:
                 self.mainWindow.poles_all_pass = np.concatenate(
-                    (self.mainWindow.poles_all_pass, np.array([new_filter])))
+                    (self.mainWindow.poles_all_pass, np.array([item])))
 
         else:
-            removed_filter = complex(value)
-
+            item = complex(value)
             # Convert the lists to NumPy arrays
             self.mainWindow.checked_phase_correction_filters = [
-                p for p in self.mainWindow.checked_phase_correction_filters if str(p) != str(removed_filter)]
+                p for p in self.mainWindow.checked_phase_correction_filters if str(p) != str(item)]
             self.mainWindow.zeros_all_pass = np.array(
-                [z for z in self.mainWindow.zeros_all_pass if str(z) != str(1 / removed_filter.conjugate())])
+                [z for z in self.mainWindow.zeros_all_pass if str(z) != str(1 / item.conjugate())])
             self.mainWindow.poles_all_pass = np.array(
-                [p for p in self.mainWindow.poles_all_pass if str(p) != str(removed_filter)])
+                [p for p in self.mainWindow.poles_all_pass if str(p) != str(item)])
 
-        self.plot_graphs()
+        self.plot_graphs(item)
 
     def delete_from_filters(self, custom_widget):
         # Find the corresponding item in the QListWidget
@@ -136,18 +166,19 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
 
             self.plot_graphs()
 
-    def plot_graphs(self):
-        w, _, phase_original = self.mainWindow.get_the_mag_and_phase(
-            self.mainWindow.zeros, self.mainWindow.poles)
+    def plot_graphs(self, item=None):
+        if item:
+            w, _, selected_filter_phase = self.mainWindow.get_the_mag_and_phase(
+                np.array([1 / item.conjugate()]), np.array([item]))
+
+            self.selectedFilterPhase.clear()
+            self.selectedFilterPhase.plot(w, selected_filter_phase)
+
         w1, _, phase_all_pass = self.mainWindow.get_the_mag_and_phase(
             np.concatenate((self.mainWindow.zeros, self.mainWindow.zeros_all_pass),
                            axis=0), np.concatenate((self.mainWindow.poles, self.mainWindow.poles_all_pass), axis=0))
-
         self.allPassPhase.clear()
-        self.allPassPhase.plot(w, phase_all_pass)
-
-        self.originalPhase.clear()
-        self.originalPhase.plot(w1, phase_original)
+        self.allPassPhase.plot(w1, phase_all_pass)
 
     def fill_filters_list(self):
         # Clear the existing items in the filtersList

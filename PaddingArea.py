@@ -36,6 +36,10 @@ class PaddingArea(QWidget):
     def plot(self):
         numerator, denominator = zpk2tf(
             self.mainWindow.zeros, self.mainWindow.poles, 1)
+
+        # Get the order of the numerator and denominator
+        order = (len(numerator) - 1) + (len(denominator) - 1)
+
         self.mainWindow.signal.output_signal_after_filter = np.real(
             lfilter(numerator, denominator, self.mainWindow.signal.data))
         # Plot updated output signal

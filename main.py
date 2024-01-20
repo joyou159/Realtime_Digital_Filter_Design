@@ -32,9 +32,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.all_phase_correction_filters = [
             0.99, 0.345, 0.732, 0.456]
         self.checked_phase_correction_filters = []
-        self.update_zeros_poles()
+
         self.zeros_all_pass = np.array([], dtype=complex)
         self.poles_all_pass = np.array([], dtype=complex)
+        self.zeros = np.array([], dtype=complex)
+        self.poles = np.array([], dtype=complex)
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
