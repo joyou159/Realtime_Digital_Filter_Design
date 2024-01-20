@@ -55,7 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Plot the magnitude response
         self.magPlot.plotItem.showGrid(True, True)
 
-        self.magPlot.setLabel('left', 'Magnitude (dB)')
+        self.magPlot.setLabel('left', 'Magnitude')
         self.magPlot.setLabel('bottom', 'W (radian/sample)')
 
         # Plot the phase response
@@ -223,7 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
         w, h = freqz(np.poly(zeros), np.poly(poles))
 
         frequencies = w
-        mag_response = 20 * np.log10(abs(h))
+        mag_response = abs(h)
         phase_response = np.angle(h)
 
         return frequencies, mag_response, phase_response
