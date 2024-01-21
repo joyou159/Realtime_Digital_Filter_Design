@@ -49,6 +49,7 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         self.on_window_closed()
+        self.mainWindow.circle_object.update_z_plane_view()
         event.accept()
 
     def on_window_closed(self):

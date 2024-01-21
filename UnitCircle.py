@@ -15,9 +15,8 @@ class UnitCircle:
         self.Poles = []
         self.Zeros = []
         self.zPlane = self.main_window.ui.zPlane
-        self.zPlane.hideAxis('bottom')
-        self.zPlane.hideAxis('left')
-        self.zPlane.setLimits(xMin=-1.1, xMax=1.1, yMin=-1.1, yMax=1.1)
+        self.zPlane.setXRange(-1.1, 1.1)
+        self.zPlane.setYRange(-1.1, 1.1)
         self.zPlane.showGrid(x=True, y=True)
         self.zPlane.setMenuEnabled(False)
         self.zeros_button = self.main_window.ui.zerosButton
@@ -42,6 +41,16 @@ class UnitCircle:
         self.update_plot(self.x, self.y)
 
         self.zPlane.scene().sigMouseClicked.connect(self.handleMouseClick)
+
+    def update_z_plane_view(self):
+        max_value = 0
+        for item in self.Zeros + self.Poles:
+            max_value = max(max_value, item.pos().x())
+            max_value = max(max_value, item.pos().y())
+
+        max_value += 0.2
+        self.zPlane.setXRange(-max_value, max_value)
+        self.zPlane.setYRange(-max_value, max_value)
 
     def add_pole(self, pos):
         curr_pole = self.draw_item(pos, "x", "r")
