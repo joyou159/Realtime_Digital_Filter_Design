@@ -5,6 +5,7 @@ from PyQt6.QtCore import QPointF
 from PyQt6.QtGui import QColor
 from functools import partial
 import pyqtgraph as pg
+import functools
 
 
 class UnitCircle:
@@ -17,10 +18,15 @@ class UnitCircle:
         self.zPlane.hideAxis('bottom')
         self.zPlane.hideAxis('left')
         self.zPlane.setLimits(xMin=-1.1, xMax=1.1, yMin=-1.1, yMax=1.1)
+        self.zPlane.setMenuEnabled(False)
         self.zeros_button = self.main_window.ui.zerosButton
         self.poles_button = self.main_window.ui.polesButton
         self.zeros_button_pressed = True
         self.poles_button_pressed = False
+        self.poles_conjugates = []
+        self.zeros_conjugates = []
+        self.conjugate_checked_for_dragging = False
+        self.conjugate_of_drag = None
         self.clear_mode = self.main_window.ui.Clear_selection.currentText()
         self.change_color()
 
@@ -62,8 +68,11 @@ class UnitCircle:
         )
         self.zPlane.addItem(item)
         # Connect the sigPositionChanged signal to the update_positions function
-        item.sigPositionChanged.connect(lambda: self.update_positions(item))
-        item.getViewBox().mouseClickEvent = lambda ev: self.contextMenuEvent(ev, item)
+        item.sigPositionChanged.connect(
+            lambda ev, item=item: self.update_positions(ev, item))
+        item.mouseClickEvent = functools.partial(
+            lambda ev, item=item: self.contextMenuEvent(ev, item))
+
         return item
 
     def change_color(self):
@@ -128,6 +137,8 @@ class UnitCircle:
                         self.add_pole(pos)
                         conjugate_pos = QPointF(pos.x(), -pos.y())
                         self.add_pole(conjugate_pos)
+                        self.poles_conjugates.append(
+                            (self.Poles[-1], self.Poles[-2]))
                     else:
                         self.add_pole(pos)
 
@@ -136,44 +147,61 @@ class UnitCircle:
                         self.add_zero(pos)
                         conjugate_pos = QPointF(pos.x(), -pos.y())
                         self.add_zero(conjugate_pos)
+                        self.zeros_conjugates.append(
+                            (self.Zeros[-1], self.Zeros[-2]))
                     else:
                         self.add_zero(pos)
 
                 self.main_window.update_zeros_poles()
                 self.plotting()
 
-    def update_positions(self, item):
+    def update_positions(self, event, item):
+        if self.main_window.Conj_pair.isChecked():
+            self.conjugate_of_drag = self.get_conjugate_of_drag(item)
+            if self.conjugate_of_drag:
+                self.conjugate_of_drag.setPos(item.pos().x(), - item.pos().y())
         self.main_window.update_zeros_poles()
         self.plotting()
+
+    def get_conjugate_of_drag(self, item):
+        if item in self.Poles:
+            for conjugates in self.poles_conjugates:
+                if item in conjugates:
+                    conjugate = conjugates[0] if conjugates[0] != item else conjugates[1]
+                    return conjugate
+
+        elif item in self.Zeros:
+            for conjugates in self.zeros_conjugates:
+                if item in conjugates:
+                    conjugate = conjugates[0] if conjugates[0] != item else conjugates[1]
+                    return conjugate
+
+        return None
 
     def contextMenuEvent(self, event, curr_item):
         if event.button() == QtCore.Qt.MouseButton.RightButton:
             menu = QtWidgets.QMenu()
-            print(type(curr_item))
 
             for pole_pos in self.Poles:
                 if pole_pos == curr_item:
                     action = menu.addAction('Remove Pole')
                     action.triggered.connect(
                         partial(self.remove_point, 'pole', pole_pos))
-                    self.zPlane.setMenuEnabled(False)
 
             for zero_pos in self.Zeros:
                 if zero_pos == curr_item:
                     action = menu.addAction('Remove Zero')
                     action.triggered.connect(
                         partial(self.remove_point, 'zero', zero_pos))
-                    self.zPlane.setMenuEnabled(False)
 
             global_pos = self.zPlane.mapToGlobal(
                 self.zPlane.mapFromScene(event.scenePos()))
             action = menu.exec(global_pos)
 
-            if action:
-                # If an action was triggered, reset clicked point
-                self.zPlane.setMenuEnabled(True)
-                self.main_window.update_zeros_poles()
-                self.plotting()
+            # If an action was triggered, reset clicked point
+        if action:
+            self.main_window.update_zeros_poles()
+            self.plotting()
 
     def plotting(self):
         self.main_window.plot_magnitude_and_phase()
