@@ -18,6 +18,7 @@ class UnitCircle:
         self.zPlane.hideAxis('bottom')
         self.zPlane.hideAxis('left')
         self.zPlane.setLimits(xMin=-1.1, xMax=1.1, yMin=-1.1, yMax=1.1)
+        self.zPlane.showGrid(x=True, y=True)
         self.zPlane.setMenuEnabled(False)
         self.zeros_button = self.main_window.ui.zerosButton
         self.poles_button = self.main_window.ui.polesButton
@@ -50,7 +51,7 @@ class UnitCircle:
         curr_zero = self.draw_item(pos, "o", "b")
         self.Zeros.append(curr_zero)
 
-    def remove_item(self, item, pos):
+    def remove_item(self, pos, item):
         if item == 'pole':
             self.Poles.remove(pos)
             self.zPlane.removeItem(pos)
@@ -157,13 +158,13 @@ class UnitCircle:
 
     def update_positions(self, event, item):
         if self.main_window.Conj_pair.isChecked():
-            self.conjugate_of_drag = self.get_conjugate_of_drag(item)
+            self.conjugate_of_drag = self.get_conjugate(item)
             if self.conjugate_of_drag:
                 self.conjugate_of_drag.setPos(item.pos().x(), - item.pos().y())
         self.main_window.update_zeros_poles()
         self.plotting()
 
-    def get_conjugate_of_drag(self, item):
+    def get_conjugate(self, item):
         if item in self.Poles:
             for conjugates in self.poles_conjugates:
                 if item in conjugates:
@@ -187,27 +188,27 @@ class UnitCircle:
                     action_1 = menu.addAction('Remove Pole')
                     action_2 = menu.addAction('Swap to Zero')
                     action_1.triggered.connect(
-                        partial(self.remove_item, 'pole', pole_pos))
+                        partial(self.remove_action, pole_pos, 'pole'))
                     action_2.triggered.connect(
-                        partial(self.swap_item_identity, pole_pos, 'pole'))
+                        partial(self.swap_action, pole_pos, 'pole'))
 
             for zero_pos in self.Zeros:
                 if zero_pos == curr_item:
                     action_1 = menu.addAction('Remove Zero')
                     action_2 = menu.addAction('Swap to Pole')
                     action_1.triggered.connect(
-                        partial(self.remove_item, 'zero', zero_pos))
+                        partial(self.remove_action,  zero_pos, 'zero'))
                     action_2.triggered.connect(
-                        partial(self.swap_item_identity, zero_pos, 'zero'))
+                        partial(self.swap_action, zero_pos, 'zero'))
 
             global_pos = self.zPlane.mapToGlobal(
                 self.zPlane.mapFromScene(event.scenePos()))
             action = menu.exec(global_pos)
 
             # If an action was triggered, reset clicked point
-        if action:
-            self.main_window.update_zeros_poles()
-            self.plotting()
+            if action:
+                self.main_window.update_zeros_poles()
+                self.plotting()
 
     def plotting(self):
         self.main_window.plot_magnitude_and_phase()
@@ -216,7 +217,7 @@ class UnitCircle:
         if len(self.main_window.signal.data):
             self.main_window.plot_input_and_output_signal()
 
-    def calculate_circle_points(self, num_points=100):
+    def calculate_circle_points(self, num_points=300):
         theta = 2 * np.pi * np.linspace(0, 1, num_points)
         x = np.cos(theta)
         y = np.sin(theta)
@@ -232,10 +233,44 @@ class UnitCircle:
         self.zPlane.addItem(vLine)
         self.zPlane.addItem(hLine)
 
+    def swap_action(self, item, identity):
+        if self.main_window.Conj_pair.isChecked():
+            conjugate_item = self.get_conjugate(item)
+            if conjugate_item:
+                self.swap_item_identity(conjugate_item, identity)
+                self.swap_item_identity(item, identity)
+                self.add_swapped_conjugates(identity)  # last 2
+                self.handle_conjugates_lists(item, identity)
+        else:
+            self.swap_item_identity(item, identity)
+
+    def add_swapped_conjugates(self, identity):
+        if identity == "pole":
+            self.zeros_conjugates.append((self.Zeros[-1], self.Zeros[-2]))
+        else:
+            self.poles_conjugates.append((self.Poles[-1], self.Poles[-2]))
+
+    def remove_action(self, item, identity):
+        if self.main_window.Conj_pair.isChecked():
+            conjugate_item = self.get_conjugate(item)
+            if conjugate_item:
+                self.remove_item(conjugate_item, identity)
+        self.remove_item(item, identity)
+
     def swap_item_identity(self, item, identity):
         if identity == "zero":
-            self.remove_item(identity, item)
+            self.remove_item(item, identity)
             self.add_pole(item.pos())
         else:
-            self.remove_item(identity, item)
+            self.remove_item(item, identity)
             self.add_zero(item.pos())
+
+    def handle_conjugates_lists(self, item, identity):
+        if identity == "pole":
+            for conjugates in self.poles_conjugates:
+                if item in conjugates:
+                    self.poles_conjugates.remove(conjugates)
+        else:
+            for conjugates in self.zeros_conjugates:
+                if item in conjugates:
+                    self.zeros_conjugates.remove(conjugates)
