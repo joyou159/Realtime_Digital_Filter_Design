@@ -245,9 +245,9 @@ class UnitCircle:
     def swap_action(self, item, identity):
         if self.main_window.Conj_pair.isChecked():
             conjugate_item = self.get_conjugate(item)
+            self.swap_item_identity(item, identity)
             if conjugate_item:
                 self.swap_item_identity(conjugate_item, identity)
-                self.swap_item_identity(item, identity)
                 self.add_swapped_conjugates(identity)  # last 2
                 self.handle_conjugates_lists(item, identity)
         else:
