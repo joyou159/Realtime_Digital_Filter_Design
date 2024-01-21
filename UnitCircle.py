@@ -50,7 +50,7 @@ class UnitCircle:
         curr_zero = self.draw_item(pos, "o", "b")
         self.Zeros.append(curr_zero)
 
-    def remove_point(self, item, pos):
+    def remove_item(self, item, pos):
         if item == 'pole':
             self.Poles.remove(pos)
             self.zPlane.removeItem(pos)
@@ -184,15 +184,21 @@ class UnitCircle:
 
             for pole_pos in self.Poles:
                 if pole_pos == curr_item:
-                    action = menu.addAction('Remove Pole')
-                    action.triggered.connect(
-                        partial(self.remove_point, 'pole', pole_pos))
+                    action_1 = menu.addAction('Remove Pole')
+                    action_2 = menu.addAction('Swap to Zero')
+                    action_1.triggered.connect(
+                        partial(self.remove_item, 'pole', pole_pos))
+                    action_2.triggered.connect(
+                        partial(self.swap_item_identity, pole_pos, 'pole'))
 
             for zero_pos in self.Zeros:
                 if zero_pos == curr_item:
-                    action = menu.addAction('Remove Zero')
-                    action.triggered.connect(
-                        partial(self.remove_point, 'zero', zero_pos))
+                    action_1 = menu.addAction('Remove Zero')
+                    action_2 = menu.addAction('Swap to Pole')
+                    action_1.triggered.connect(
+                        partial(self.remove_item, 'zero', zero_pos))
+                    action_2.triggered.connect(
+                        partial(self.swap_item_identity, zero_pos, 'zero'))
 
             global_pos = self.zPlane.mapToGlobal(
                 self.zPlane.mapFromScene(event.scenePos()))
@@ -225,3 +231,11 @@ class UnitCircle:
             pos=0, angle=0, movable=False, pen=(255, 255, 255))
         self.zPlane.addItem(vLine)
         self.zPlane.addItem(hLine)
+
+    def swap_item_identity(self, item, identity):
+        if identity == "zero":
+            self.remove_item(identity, item)
+            self.add_pole(item.pos())
+        else:
+            self.remove_item(identity, item)
+            self.add_zero(item.pos())
