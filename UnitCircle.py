@@ -27,7 +27,10 @@ class UnitCircle:
         self.zeros_conjugates = []
         self.conjugate_checked_for_dragging = False
         self.conjugate_of_drag = None
+        
         self.clear_mode = self.main_window.ui.Clear_selection.currentText()
+        # self.main_window.ui.Clear_selection.set()
+
         self.change_color()
 
         self.zeros_button.clicked.connect(self.handle_mode_of_insertion)
@@ -65,6 +68,7 @@ class UnitCircle:
             self.Poles.remove(pos)
             self.zPlane.removeItem(pos)
         elif item == 'zero':
+            print(pos)
             self.Zeros.remove(pos)
             self.zPlane.removeItem(pos)
 

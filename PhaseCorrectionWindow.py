@@ -49,6 +49,8 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         self.on_window_closed()
+        self.mainWindow.update_zeros_poles()
+        self.mainWindow.circle_object.plotting()
         self.mainWindow.circle_object.update_z_plane_view()
         event.accept()
 
@@ -136,13 +138,48 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
 
         else:
             item = complex(value)
+
+            # # Convert the lists to NumPy arrays
+            # self.mainWindow.checked_phase_correction_filters = [
+            #     p for p in self.mainWindow.checked_phase_correction_filters if str(p) != str(item)]
+            # self.mainWindow.zeros_all_pass = np.array(
+            #     [z for z in self.mainWindow.zeros_all_pass if str(z) != str(1 / item.conjugate())])
+            # self.mainWindow.poles_all_pass = np.array(
+            #     [p for p in self.mainWindow.poles_all_pass if str(p) != str(item)])
+
             # Convert the lists to NumPy arrays
-            self.mainWindow.checked_phase_correction_filters = [
-                p for p in self.mainWindow.checked_phase_correction_filters if str(p) != str(item)]
-            self.mainWindow.zeros_all_pass = np.array(
-                [z for z in self.mainWindow.zeros_all_pass if str(z) != str(1 / item.conjugate())])
-            self.mainWindow.poles_all_pass = np.array(
-                [p for p in self.mainWindow.poles_all_pass if str(p) != str(item)])
+            new_checked_phase_correction_filters = []
+            for p in self.mainWindow.checked_phase_correction_filters:
+                if str(p) != str(item):
+                    new_checked_phase_correction_filters.append(p)
+            self.mainWindow.checked_phase_correction_filters = new_checked_phase_correction_filters
+
+            new_zeros_all_pass = []
+            for z in self.mainWindow.zeros_all_pass:
+                if str(z) != str(1 / item.conjugate()):
+                    new_zeros_all_pass.append(z)
+                else:
+                    for target in self.mainWindow.circle_object.Zeros:
+                        print(f"Point is", Point(z.real, z.imag))
+                        print(f"target is", target.pos())
+                        if Point(z.real, z.imag) == target.pos():
+
+                            self.mainWindow.circle_object.remove_item(
+                                target, "zero")
+
+            self.mainWindow.zeros_all_pass = np.array(new_zeros_all_pass)
+
+            new_poles_all_pass = []
+            for p in self.mainWindow.poles_all_pass:
+                if str(p) != str(item):
+                    new_poles_all_pass.append(p)
+                else:
+                    for target in self.mainWindow.circle_object.Poles:
+                        if Point(p.real, p.imag) == target.pos():
+                            self.mainWindow.circle_object.remove_item(
+                                target, "pole")
+
+            self.mainWindow.poles_all_pass = np.array(new_poles_all_pass)
 
         self.plot_graphs(item)
 
