@@ -2,7 +2,7 @@ import numpy as np
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtCore import QPointF
 
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QIcon
 from functools import partial
 import pyqtgraph as pg
 import functools
@@ -18,16 +18,20 @@ class UnitCircle:
         self.zPlane.setXRange(-1.1, 1.1)
         self.zPlane.setYRange(-1.1, 1.1)
         self.zPlane.showGrid(x=True, y=True)
+        self.zPlane.setBackground("transparent")
         self.zPlane.setMenuEnabled(False)
         self.zeros_button = self.main_window.ui.zerosButton
         self.poles_button = self.main_window.ui.polesButton
+        self.zeros_button.setIcon(QIcon("Icons\circle.png"))
+        self.poles_button.setIcon(QIcon("Icons\cross.png"))
+        self.main_window.clear_button.setIcon(QIcon("Icons\clear.png"))
         self.zeros_button_pressed = True
         self.poles_button_pressed = False
         self.poles_conjugates = []
         self.zeros_conjugates = []
         self.conjugate_checked_for_dragging = False
         self.conjugate_of_drag = None
-        
+
         self.clear_mode = self.main_window.ui.Clear_selection.currentText()
         # self.main_window.ui.Clear_selection.set()
 
@@ -46,7 +50,7 @@ class UnitCircle:
         self.zPlane.scene().sigMouseClicked.connect(self.handleMouseClick)
 
     def update_z_plane_view(self):
-        max_value = 0
+        max_value = 1
         for item in self.Zeros + self.Poles:
             max_value = max(max_value, item.pos().x())
             max_value = max(max_value, item.pos().y())
@@ -90,21 +94,17 @@ class UnitCircle:
         return item
 
     def change_color(self):
-        if self.zeros_button_pressed:
-            zeros_color = QColor(
-                255, 0, 0)
-        else:
-            zeros_color = QColor()
+        # Update color for zeros_button
+        zeros_color = QColor(
+            64, 92, 245) if self.zeros_button_pressed else QColor(0, 0, 0)
         self.zeros_button.setStyleSheet(
-            f'background-color: {zeros_color.name()};')
+            f'background-color: {zeros_color.name()}; border: 1px solid gray; padding: 6px;  border-radius: 6px;font-size: 14px;')
 
-        if self.poles_button_pressed:
-            poles_color = QColor(
-                255, 0, 0)
-        else:
-            poles_color = QColor()
+        # Update color for poles_button
+        poles_color = QColor(
+            64, 92, 245) if self.poles_button_pressed else QColor(0, 0, 0)
         self.poles_button.setStyleSheet(
-            f'background-color: {poles_color.name()};')
+            f'background-color: {poles_color.name()}; border: 1px solid gray; padding: 6px;  border-radius: 6px;font-size: 14px;')
 
     def handle_mode_of_insertion(self):
         source = self.main_window.ui.sender()
@@ -238,7 +238,10 @@ class UnitCircle:
 
     def update_plot(self, x, y):
         self.zPlane.clear()
-        self.zPlane.plot(x, y)
+        pen_color = QColor(255, 255, 255)
+        line_width = 2
+        self.zPlane.plot(x, y, pen=pg.mkPen(
+            color=pen_color, width=line_width))
         vLine = pg.InfiniteLine(
             pos=0, angle=90, movable=False, pen=(255, 255, 255))
         hLine = pg.InfiniteLine(

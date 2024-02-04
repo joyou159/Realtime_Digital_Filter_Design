@@ -4,24 +4,28 @@ from PyQt6.QtGui import QIcon
 import numpy as np
 from PyQt6.QtCore import Qt, QElapsedTimer
 from pyqtgraph import Point
+import pyqtgraph as pg
+from PyQt6.QtGui import QColor
 
 
 class PhaseCorrectionWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(PhaseCorrectionWindow, self).__init__(parent)
         uic.loadUi('phaseCorrection.ui', self)
+        self.setWindowIcon(QIcon("Icons\pngwing.com.png"))
         self.setWindowTitle("Phase Correction")
         self.destroyed.connect(self.on_window_closed)
         self.add.clicked.connect(self.add_filter)
         self.mainWindow = self.parent()
         # Plot the phase response
         self.allPassPhase.plotItem.showGrid(True, True)
+        self.allPassPhase.setBackground("transparent")
 
         self.allPassPhase.setLabel('left', 'Phase (radian)')
         self.allPassPhase.setLabel('bottom', 'W (radian/sample)')
         # Plot the phase response
         self.selectedFilterPhase.plotItem.showGrid(True, True)
-
+        self.selectedFilterPhase.setBackground("transparent")
         self.selectedFilterPhase.setLabel('left', 'Phase (radian)')
         self.selectedFilterPhase.setLabel('bottom', 'W (radian/sample)')
 
@@ -139,14 +143,6 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         else:
             item = complex(value)
 
-            # # Convert the lists to NumPy arrays
-            # self.mainWindow.checked_phase_correction_filters = [
-            #     p for p in self.mainWindow.checked_phase_correction_filters if str(p) != str(item)]
-            # self.mainWindow.zeros_all_pass = np.array(
-            #     [z for z in self.mainWindow.zeros_all_pass if str(z) != str(1 / item.conjugate())])
-            # self.mainWindow.poles_all_pass = np.array(
-            #     [p for p in self.mainWindow.poles_all_pass if str(p) != str(item)])
-
             # Convert the lists to NumPy arrays
             new_checked_phase_correction_filters = []
             for p in self.mainWindow.checked_phase_correction_filters:
@@ -210,13 +206,19 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
                 np.array([1 / item.conjugate()]), np.array([item]))
 
             self.selectedFilterPhase.clear()
-            self.selectedFilterPhase.plot(w, selected_filter_phase)
+            pen_color = QColor(255, 255, 255)
+            line_width = 2
+            self.selectedFilterPhase.plot(w, selected_filter_phase, pen=pg.mkPen(
+                color=pen_color, width=line_width))
 
         w1, _, phase_all_pass = self.mainWindow.get_the_mag_and_phase(
             np.concatenate((self.mainWindow.zeros, self.mainWindow.zeros_all_pass),
                            axis=0), np.concatenate((self.mainWindow.poles, self.mainWindow.poles_all_pass), axis=0))
         self.allPassPhase.clear()
-        self.allPassPhase.plot(w1, phase_all_pass)
+        pen_color = QColor(255, 255, 255)
+        line_width = 2
+        self.allPassPhase.plot(w1, phase_all_pass, pen=pg.mkPen(
+            color=pen_color, width=line_width))
 
     def fill_filters_list(self):
         # Clear the existing items in the filtersList

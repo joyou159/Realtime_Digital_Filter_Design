@@ -6,23 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>852</width>
+    <width>853</width>
     <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #242526;</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_6">
     <property name="topMargin">
-     <number>9</number>
+     <number>15</number>
     </property>
     <property name="bottomMargin">
      <number>0</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,2,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,0,2,0,2">
       <property name="bottomMargin">
        <number>0</number>
       </property>
@@ -51,6 +54,41 @@
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QPushButton" name="zerosButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
+            </property>
             <property name="text">
              <string>Zeros</string>
             </property>
@@ -58,6 +96,41 @@
           </item>
           <item>
            <widget class="QPushButton" name="polesButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
+            </property>
             <property name="text">
              <string>Poles</string>
             </property>
@@ -82,6 +155,46 @@
           </item>
           <item>
            <widget class="QCheckBox" name="Conj_pair">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox {
+    spacing: 10px; /* Adjust the spacing between the checkbox and label */
+color:white;
+background: rgba(74, 74, 74, 0);
+margin-top: 12px;
+}
+
+QCheckBox::indicator {
+    width: 15px; /* Adjust the width of the checkbox indicator */
+    height: 15px; /* Adjust the height of the checkbox indicator */
+border-radius: 5px;
+}
+
+QCheckBox::indicator:unchecked {
+    border: 2px solid #555; /* Border color of the unchecked checkbox */
+    background-color: #fff; /* Background color of the unchecked checkbox */
+}
+
+QCheckBox::indicator:unchecked:hover {
+    border: 2px solid #777; /* Border color when the unchecked checkbox is hovered */
+}
+
+QCheckBox::indicator:checked {
+    border: 2px solid #192462; /* Border color of the checked checkbox */
+    background-color: #405cf5; /* Background color of the checked checkbox */
+}
+
+QCheckBox::indicator:checked:hover {
+    border: 2px solid #0C1231; /* Border color when the checked checkbox is hovered */
+    background-color: #2C40AB; /* Background color when the checked checkbox is hovered */
+}
+</string>
+            </property>
             <property name="text">
              <string>conjugates</string>
             </property>
@@ -104,6 +217,18 @@
         </item>
         <item>
          <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Z_Plane Circle </string>
           </property>
@@ -112,15 +237,67 @@
         <item>
          <widget class="PlotWidget" name="zPlane" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="topMargin">
+           <number>10</number>
+          </property>
           <item>
            <widget class="QComboBox" name="Clear_selection">
+            <property name="styleSheet">
+             <string notr="true">.QComboBox {
+  width: 35px;
+  background-color: #333;
+  border: 1px solid #333;  /* Change border color to a dark color that complements the theme */
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.QComboBox::down-arrow {
+  width: 10px;
+  height: 10px;
+  background-color: #405cf5;  /* Change arrow background color to a dark color */
+  border-radius: 5px;
+  position: absolute;
+  right: -10px;
+  bottom: 5px;
+  cursor: pointer;
+}
+
+.QComboBox::down-arrow:hover {
+  background-color: #555;  /* Change arrow background color when hovering */
+}
+
+.QComboBox::drop-down {
+  width: 40px;
+  background-color: white;
+  border: 1px solid #333;  /* Change drop-down border color to a dark color */
+  border-radius: 5px;
+  padding: 3px 3px;
+  cursor: pointer;
+}
+
+.QComboBox::item {
+  height: 20px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.QComboBox::item:selected {
+  background-color: #333;  /* Change selected item background color to a dark color */
+}
+
+.QComboBox {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+</string>
+            </property>
             <item>
              <property name="text">
               <string>Zeros</string>
@@ -140,6 +317,41 @@
           </item>
           <item>
            <widget class="QPushButton" name="clear_button">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0.3px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
+            </property>
             <property name="text">
              <string>Clear</string>
             </property>
@@ -163,7 +375,40 @@
        </layout>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="styleSheet">
+         <string notr="true">/* Line style */
+
+  /* Set the width of the line */
+  width: 20px;
+
+  /* Set the height of the line */
+  height: 5px;
+
+  /* Set the background color of the line */
+  background-color:rgb(77, 86, 105);
+
+  /* Set the border of the line */
+  border: 10px;
+
+  /* Set the border radius of the line */
+  border-radius:5px;
+
+
+
+
+</string>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,4,0,4,0">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <property name="leftMargin">
          <number>20</number>
         </property>
@@ -171,10 +416,21 @@
          <number>20</number>
         </property>
         <property name="bottomMargin">
-         <number>0</number>
+         <number>10</number>
         </property>
         <item>
          <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Magnitude Response</string>
           </property>
@@ -183,12 +439,24 @@
         <item>
          <widget class="PlotWidget" name="magPlot" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Phase Response</string>
           </property>
@@ -197,13 +465,49 @@
         <item>
          <widget class="PlotWidget" name="phasePlot" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="correctPhase">
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+margin: 10px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
+          </property>
           <property name="text">
            <string>Correct Phase</string>
           </property>
@@ -212,23 +516,123 @@
        </layout>
       </item>
       <item>
+       <widget class="Line" name="line_2">
+        <property name="styleSheet">
+         <string notr="true">/* Line style */
+
+  /* Set the width of the line */
+  width: 20px;
+
+  /* Set the height of the line */
+  height: 5px;
+
+  /* Set the background color of the line */
+  background-color:rgb(77, 86, 105);
+
+  /* Set the border of the line */
+  border: 10px;
+
+  /* Set the border radius of the line */
+  border-radius:5px;
+
+
+
+
+</string>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0,4,0,4,0,4,0,0">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>15</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <widget class="QPushButton" name="importSignal">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+padding: 6px;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
             </property>
             <property name="text">
-             <string>Import Signal</string>
+             <string>Upload </string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="customSignal">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #000;
+  border: 1px solid gray;
+  border-radius: 6px;
+
+padding: 6px;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+</string>
+            </property>
             <property name="text">
-             <string>Custom Signal</string>
+             <string>Custom </string>
             </property>
            </widget>
           </item>
@@ -236,6 +640,17 @@
         </item>
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Padding Area</string>
           </property>
@@ -251,6 +666,17 @@
         </item>
         <item>
          <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Input Signal</string>
           </property>
@@ -259,13 +685,24 @@
         <item>
          <widget class="PlotWidget" name="inputSignal" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Output Signal</string>
           </property>
@@ -274,8 +711,8 @@
         <item>
          <widget class="PlotWidget" name="outputSignal" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
@@ -288,6 +725,11 @@
         </item>
         <item>
          <widget class="QLabel" name="numOfPoints">
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:10px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>1 points/sec</string>
           </property>
@@ -307,7 +749,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>852</width>
+     <width>853</width>
      <height>26</height>
     </rect>
    </property>

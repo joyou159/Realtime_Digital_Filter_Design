@@ -1,4 +1,5 @@
 from PyQt6 import QtWidgets, uic, QtGui
+from PyQt6.QtGui import QPen, QColor, QIcon
 from PyQt6.QtCore import QTimer
 import numpy as np
 import pyqtgraph as pg
@@ -20,10 +21,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.init_ui()
+        self.setWindowIcon(QIcon("Icons\pngwing.com.png"))
 
         # self.plot_magnitude_and_phase()
         self.zPlane = self.ui.zPlane
         self.magPlot = self.ui.magPlot
+        self.ui.magPlot.setBackground("transparent")
+        self.ui.phasePlot.setBackground("transparent")
+        self.inputSignal.setBackground("transparent")
+        self.outputSignal.setBackground("transparent")
         self.input_signal = None
         self.input_mode = None
         self.point_per_second = 1  # Initial filter speed
@@ -40,7 +46,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def init_ui(self):
         self.ui = uic.loadUi('Mainwindow.ui', self)
-        self.setWindowTitle("Realtime Digital Filter Design")
+        self.setWindowTitle("Digital Filter Designer")
         # Plot the magnitude response
         self.inputSignal.plotItem.showGrid(True, True)
         self.inputSignal.clear()
@@ -65,8 +71,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.phasePlot.setLabel('bottom', 'W (radian/sample)')
 
         self.ui.correctPhase.clicked.connect(self.open_phase_correction_window)
-        self.importSignal.clicked.connect(self.on_importSignal_cliked)
-        self.customSignal.clicked.connect(self.on_customSignal_cliked)
+        self.ui.correctPhase.setIcon(QIcon("Icons\correction.png"))
+        self.ui.importSignal.clicked.disconnect()
+        self.ui.importSignal.clicked.connect(self.on_importSignal_clicked)
+        self.ui.customSignal.clicked.connect(self.on_customSignal_clicked)
+        self.ui.importSignal.setIcon(
+            QIcon('Icons\\upload-square-svgrepo-com.png'))
+        self.ui.customSignal.setIcon(QIcon('Icons\custom.png'))
         self.Speed.setMinimum(1)
         self.Speed.setMaximum(100)
         self.Speed.setValue(1)  # Initial value
@@ -100,29 +111,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Plot updated output signal
         self.outputSignal.plot(self.signal.time[:self.idx],
-                               self.signal.output_signal_after_filter[:self.idx], pen='r')
+                               self.signal.output_signal_after_filter[:self.idx], pen=pg.mkPen(
+            color=(255, 0, 0), width=2))
 
         self.inputSignal.plot(
-            self.signal.time[:self.idx], self.signal.data[:self.idx], pen='b')
+            self.signal.time[:self.idx], self.signal.data[:self.idx], pen=pg.mkPen(
+                color=(0, 0, 255), width=2))
 
-    def on_importSignal_cliked(self):
+    def on_importSignal_clicked(self):
         self.input_mode = "import"
-        self.customSignal.setStyleSheet("")
         self.browse()
 
-    def on_customSignal_cliked(self):
+    def on_customSignal_clicked(self):
         if self.input_mode == "custom":
             self.input_mode = None
-            # self.padding_area.timer = QTimer(self)
             self.padding_area.first_time_enter = True
         else:
             self.input_mode = "custom"
-        # Toggle button color between red and white
-        current_color = self.sender().styleSheet()
-        if 'background-color: red' in current_color:
-            self.sender().setStyleSheet("")
+
+        # Set button color based on the current input_mode
+        if self.input_mode == "custom":
+            self.sender().setStyleSheet(
+                "background-color: red; border: 1px solid gray; padding: 9px;  border-radius: 6px; font-size: 14px;")
         else:
-            self.sender().setStyleSheet("background-color: red;")
+            self.sender().setStyleSheet(
+                "background-color: #000; border: 1px solid gray; padding: 9px;  border-radius: 6px;font-size: 14px;")
 
     def browse(self):
         self.idx = 0
@@ -180,10 +193,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def plot_magnitude_and_phase(self):  # need to be modified
         self.points_on_the_circle = self.calculate_points_on_circle()
         w, mag, phase = self.get_the_mag_and_phase(self.zeros, self.poles)
+        pen_color = QColor(255, 255, 255)
+        line_width = 2
         self.magPlot.clear()
-        self.magPlot.plot(w, mag)
+        self.magPlot.plot(w, mag, pen=pg.mkPen(
+            color=pen_color, width=line_width))
         self.phasePlot.clear()
-        self.phasePlot.plot(w, phase)
+        self.phasePlot.plot(w, phase, pen=pg.mkPen(
+            color=pen_color, width=line_width))
 
     def plot_input_and_output_signal(self):
 

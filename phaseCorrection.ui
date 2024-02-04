@@ -13,10 +13,13 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #242526;</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,1,0,1">
       <property name="leftMargin">
        <number>40</number>
       </property>
@@ -52,6 +55,17 @@
         </item>
         <item>
          <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>Selected Filter Phase</string>
           </property>
@@ -60,8 +74,8 @@
         <item>
          <widget class="PlotWidget" name="selectedFilterPhase" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
@@ -81,6 +95,36 @@
        </layout>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="styleSheet">
+         <string notr="true">/* Line style */
+
+  /* Set the width of the line */
+  width: 20px;
+
+  /* Set the height of the line */
+  height: 5px;
+
+  /* Set the background color of the line */
+  background-color:rgb(77, 86, 105);
+
+  /* Set the border of the line */
+  border: 10px;
+
+  /* Set the border radius of the line */
+  border-radius:5px;
+
+
+
+
+</string>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="leftMargin">
          <number>20</number>
@@ -92,6 +136,17 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+            </property>
             <property name="text">
              <string>Coffecient Value</string>
             </property>
@@ -102,6 +157,19 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEdit">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit {
+    background-color: #f0f0f0;  /* Background color */
+    border: 1px solid #c0c0c0;  /* Border color */
+    padding: 5px;  /* Padding */
+    border-radius: 3px;  /* Border radius */
+}
+
+QLineEdit:hover {
+    border: 1px solid #707070;  /* Border color on hover */
+}
+</string>
+            </property>
             <property name="inputMethodHints">
              <set>Qt::ImhNone</set>
             </property>
@@ -132,6 +200,41 @@
           </item>
           <item>
            <widget class="QPushButton" name="add">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Ubuntu,sans-serif;
+  font-size: 15px;
+  height: 35px;
+  line-height: 1.15;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:100px;
+}
+QPushButton:hover{
+background-color: #283999;
+}
+QPushButton:pressed{
+background-color: #1c2973;
+}
+</string>
+            </property>
             <property name="text">
              <string>Add</string>
             </property>
@@ -156,13 +259,52 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+            </property>
             <property name="text">
              <string>All Pass Filters</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="filtersList"/>
+           <widget class="QListWidget" name="filtersList">
+            <property name="styleSheet">
+             <string notr="true">QListWidget {
+    background-color: #4a4a4a; /* Background color of the list widget */
+    /*border: 1px solid #c0c0c0; /* Border color and width */
+    padding: 5px; /* Padding around the list items */
+	border-radius: 15px;
+}
+
+QListWidget::item {
+    background-color: #4a4a4a; /* Background color of each list item */
+    padding: 5px; /* Padding inside each list item */
+    border-bottom: 1px solid #c0c0c0; /* Separator between list items */
+    border-radius: 15px; /* Border radius for rounded corners */
+	color: #ffffff;
+}
+
+
+QListWidget::item:selected {
+    background-color: #3399ff; /* Background color of selected item */
+    color: #ffffff; /* Text color of selected item */
+}
+
+QListWidget::item:hover {
+    background-color: #e0e0e0; /* Background color when hovering over an item */
+}
+</string>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_3">
@@ -180,6 +322,36 @@
          </layout>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="styleSheet">
+         <string notr="true">/* Line style */
+
+  /* Set the width of the line */
+  width: 20px;
+
+  /* Set the height of the line */
+  height: 5px;
+
+  /* Set the background color of the line */
+  background-color:rgb(77, 86, 105);
+
+  /* Set the border of the line */
+  border: 10px;
+
+  /* Set the border radius of the line */
+  border-radius:5px;
+
+
+
+
+</string>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,1,0">
@@ -204,6 +376,17 @@
         </item>
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:white;
+font-size:15px;
+margin: 0 0 ;</string>
+          </property>
           <property name="text">
            <string>All Pass Phase</string>
           </property>
@@ -212,8 +395,8 @@
         <item>
          <widget class="PlotWidget" name="allPassPhase" native="true">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-</string>
+           <string notr="true">border-radius: 6px;
+background: rgba(74, 74, 74, 0);</string>
           </property>
          </widget>
         </item>
@@ -242,7 +425,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
