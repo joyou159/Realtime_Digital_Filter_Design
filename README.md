@@ -68,6 +68,8 @@ https://github.com/joyou159/Realtime_Digital_Filter_Design/assets/85418161/cf880
 
 **High Pass Filter**
 
+https://github.com/joyou159/Realtime_Digital_Filter_Design/assets/85418161/af745cbc-d1f0-429a-9a93-90fa5f2906e2
+
 
 ## Getting Started
 
