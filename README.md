@@ -58,8 +58,13 @@ This desktop application enables users to design custom digital filters by placi
 
 ## Preveiw 
 
+**Z-Plane**
+
+https://github.com/joyou159/Realtime_Digital_Filter_Design/assets/85418161/aea6037f-3f6c-4cfb-815d-fbb597da779f
+
 **Low Pass Filter**
 
+https://github.com/joyou159/Realtime_Digital_Filter_Design/assets/85418161/cf880b65-da8d-48a0-aaff-ca16c16a4d56
 
 **High Pass Filter**
 
@@ -82,13 +87,3 @@ pip install -r requirements.txt
 ``` bash 
 python main.py
 ```
-
-## Usage
-
-1. Run the application.
-2. Interactively design the filter by placing zeros and poles on the z-plane.
-3. Visualize the frequency response.
-4. Apply real-time filtering to a signal.
-5. Explore and add all-pass filters for phase correction.
-
-Feel free to explore and customize your digital filter design with ease!
