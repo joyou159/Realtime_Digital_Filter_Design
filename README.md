@@ -61,7 +61,7 @@ This desktop application enables users to design custom digital filters by placi
 **Low Pass Filter**
 
 
-**Low Pass Filter**
+**High Pass Filter**
 
 
 ## Getting Started
