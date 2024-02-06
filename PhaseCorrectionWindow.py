@@ -21,6 +21,9 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.allPassPhase.plotItem.showGrid(True, True)
         self.allPassPhase.setBackground("transparent")
 
+        self.filtersList.itemSelectionChanged.connect(
+            self.onItemSelectionChanged)
+
         self.allPassPhase.setLabel('left', 'Phase (radian)')
         self.allPassPhase.setLabel('bottom', 'W (radian/sample)')
         # Plot the phase response
@@ -32,24 +35,7 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.fill_filters_list()
 
         if self.mainWindow.poles_all_pass.size:
-            self.plot_graphs()
-
-        print("Poles All Pass:")
-
-        for pole in self.mainWindow.poles_all_pass:
-            print(pole)
-
-        print("Zeros All Pass:")
-        for zero in self.mainWindow.zeros_all_pass:
-            print(zero)
-
-        print("all Phase Correction Filters:")
-        for phase_filter in self.mainWindow.all_phase_correction_filters:
-            print(phase_filter)
-
-        print("checked Phase Correction Filters:")
-        for phase_filter in self.mainWindow.checked_phase_correction_filters:
-            print(phase_filter)
+            self.plot_overall_phase()
 
     def closeEvent(self, event):
         self.on_window_closed()
@@ -85,6 +71,32 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         self.mainWindow.phasePlot.clear()
         self.mainWindow.phasePlot.plot(w1, phase_all_pass)
         self.close()
+
+    def onItemSelectionChanged(self):
+        # Get the selected item
+        selected_items = self.filtersList.selectedItems()
+
+        if selected_items:
+            selected_item = selected_items[0]
+
+            # Get the custom widget associated with the selected item
+            custom_widget = self.filtersList.itemWidget(selected_item)
+
+            # Assuming the value you want to retrieve is stored in a QLabel within the custom widget
+            label_widget = custom_widget.findChild(QLabel)
+            if label_widget:
+                item = complex(label_widget.text())
+                pen_color = QColor(255, 255, 255)
+                line_width = 2
+                w, _, selected_filter_phase = self.mainWindow.get_the_mag_and_phase(
+                    np.array([1 / item.conjugate()]), np.array([item]))
+
+                self.selectedFilterPhase.clear()
+
+                self.selectedFilterPhase.plot(w, selected_filter_phase, pen=pg.mkPen(
+                    color=pen_color, width=line_width))
+            else:
+                self.selectedFilterPhase.clear()
 
     def add_filter(self):
         text = self.lineEdit.text()
@@ -139,7 +151,6 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
             else:
                 self.mainWindow.poles_all_pass = np.concatenate(
                     (self.mainWindow.poles_all_pass, np.array([item])))
-
         else:
             item = complex(value)
 
@@ -156,8 +167,6 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
                     new_zeros_all_pass.append(z)
                 else:
                     for target in self.mainWindow.circle_object.Zeros:
-                        print(f"Point is", Point(z.real, z.imag))
-                        print(f"target is", target.pos())
                         if Point(z.real, z.imag) == target.pos():
 
                             self.mainWindow.circle_object.remove_item(
@@ -176,8 +185,7 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
                                 target, "pole")
 
             self.mainWindow.poles_all_pass = np.array(new_poles_all_pass)
-
-        self.plot_graphs(item)
+        self.plot_overall_phase()
 
     def delete_from_filters(self, custom_widget):
         # Find the corresponding item in the QListWidget
@@ -198,25 +206,15 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
                 self.mainWindow.poles_all_pass = np.array(
                     [p for p in self.mainWindow.poles_all_pass if str(p) != str(removed_filter)])
 
-            self.plot_graphs()
+            self.plot_overall_phase()
 
-    def plot_graphs(self, item=None):
-        if item:
-            w, _, selected_filter_phase = self.mainWindow.get_the_mag_and_phase(
-                np.array([1 / item.conjugate()]), np.array([item]))
-
-            self.selectedFilterPhase.clear()
-            pen_color = QColor(255, 255, 255)
-            line_width = 2
-            self.selectedFilterPhase.plot(w, selected_filter_phase, pen=pg.mkPen(
-                color=pen_color, width=line_width))
-
+    def plot_overall_phase(self, item=None):
+        pen_color = QColor(255, 255, 255)
+        line_width = 2
         w1, _, phase_all_pass = self.mainWindow.get_the_mag_and_phase(
             np.concatenate((self.mainWindow.zeros, self.mainWindow.zeros_all_pass),
                            axis=0), np.concatenate((self.mainWindow.poles, self.mainWindow.poles_all_pass), axis=0))
         self.allPassPhase.clear()
-        pen_color = QColor(255, 255, 255)
-        line_width = 2
         self.allPassPhase.plot(w1, phase_all_pass, pen=pg.mkPen(
             color=pen_color, width=line_width))
 
@@ -228,7 +226,7 @@ class PhaseCorrectionWindow(QtWidgets.QMainWindow):
         for phase_correction_filter in self.mainWindow.all_phase_correction_filters:
             self.add_filter_from_pole(phase_correction_filter)
 
-        self.plot_graphs()
+        self.plot_overall_phase()
 
     def add_filter_from_pole(self, pole):
         custom_widget = QWidget()

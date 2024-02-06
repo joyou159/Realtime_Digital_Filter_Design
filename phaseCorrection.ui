@@ -67,7 +67,7 @@ font-size:15px;
 margin: 0 0 ;</string>
           </property>
           <property name="text">
-           <string>Selected Filter Phase</string>
+           <string>Selected All Pass Filter</string>
           </property>
          </widget>
         </item>
@@ -388,7 +388,7 @@ font-size:15px;
 margin: 0 0 ;</string>
           </property>
           <property name="text">
-           <string>All Pass Phase</string>
+           <string>Overall Phase Response</string>
           </property>
          </widget>
         </item>
