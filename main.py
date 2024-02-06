@@ -30,7 +30,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.phasePlot.setBackground("transparent")
         self.inputSignal.setBackground("transparent")
         self.outputSignal.setBackground("transparent")
-        self.input_signal = None
         self.input_mode = None
         self.point_per_second = 1  # Initial filter speed
         self.idx = 0
@@ -110,16 +109,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.idx += self.point_per_second
 
         # Plot updated output signal
-        self.outputSignal.plot(self.signal.time[:self.idx],
-                               self.signal.output_signal_after_filter[:self.idx], pen=pg.mkPen(
-            color=(255, 0, 0), width=2))
-
         self.inputSignal.plot(
             self.signal.time[:self.idx], self.signal.data[:self.idx], pen=pg.mkPen(
                 color=(0, 0, 255), width=2))
 
+        self.outputSignal.plot(self.signal.time[:self.idx],
+                               self.signal.output_signal_after_filter[:self.idx], pen=pg.mkPen(
+            color=(255, 0, 0), width=2))
+
     def on_importSignal_clicked(self):
         self.input_mode = "import"
+        self.idx = 0
         self.browse()
 
     def on_customSignal_clicked(self):
@@ -128,7 +128,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.padding_area.first_time_enter = True
         else:
             self.input_mode = "custom"
-
+        self.idx = 0
+        self.signal = Signal()
         # Set button color based on the current input_mode
         if self.input_mode == "custom":
             self.sender().setStyleSheet(

@@ -163,6 +163,7 @@ margin: 0 0 ;</string>
     border: 1px solid #c0c0c0;  /* Border color */
     padding: 5px;  /* Padding */
     border-radius: 3px;  /* Border radius */
+    color: black;  /* Text color */
 }
 
 QLineEdit:hover {
