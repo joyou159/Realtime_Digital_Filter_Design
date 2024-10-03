@@ -2,6 +2,11 @@
 
 This desktop application enables users to design custom digital filters by placing zeros and poles on the z-plane. The application provides a user-friendly interface with the following features:
 
+<p align="center">
+  <img src="README-Assets\Filter_design.png" alt="Filter design interface" title="Filter design interface" />
+</p>
+
+
 ## Interactive Z-Plane Plot:
 
 ### Insertion:
